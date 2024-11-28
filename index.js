@@ -1,17 +1,30 @@
-import { tweetsData } from './data.js'
-const tweetInput = document.getElementById('tweet-input')
-const tweetBtn = document.getElementById('tweet-btn')
+import { tweetsData } from "./data.js";
+const tweetInput = document.getElementById("tweet-input");
+const tweetBtn = document.getElementById("tweet-btn");
 
-tweetBtn.addEventListener('click', function(){
-    console.log(tweetInput.value)
-})
+tweetBtn.addEventListener("click", function () {
+  console.log(tweetInput.value);
+});
 
-function getFeedHtml(){
-    
-    let feedHtml = ``
-    
-    tweetsData.forEach(function(tweet){
-        feedHtml += `
+document.addEventListener("click", function (e) {
+  if (e.target.dataset.like) {
+    handleLikeClick(e.target.dataset.like);
+  }
+});
+
+function handleLikeClick(tweetId) {
+  const targetTweetObj = tweetsData.filter(function (tweet) {
+    return tweet.uuid === tweetId;
+  })[0];
+  targetTweetObj.likes++;
+  console.log(tweetsData);
+}
+
+function getFeedHtml() {
+  let feedHtml = ``;
+
+  tweetsData.forEach(function (tweet) {
+    feedHtml += `
 <div class="tweet">
     <div class="tweet-inner">
         <img src="${tweet.profilePic}" class="profile-pic">
@@ -20,33 +33,34 @@ function getFeedHtml(){
             <p class="tweet-text">${tweet.tweetText}</p>
             <div class="tweet-details">
                 <span class="tweet-detail">
+                    <i class="fa-regular fa-comment-dots"
+                    data-reply="${tweet.uuid}"
+                    ></i>
                     ${tweet.replies.length}
                 </span>
                 <span class="tweet-detail">
+                    <i class="fa-solid fa-heart"
+                    data-like="${tweet.uuid}"
+                    ></i>
                     ${tweet.likes}
                 </span>
                 <span class="tweet-detail">
+                    <i class="fa-solid fa-retweet"
+                    data-retweet="${tweet.uuid}"
+                    ></i>
                     ${tweet.retweets}
                 </span>
             </div>   
         </div>            
     </div>
 </div>
-`
-   })
-   return feedHtml 
+`;
+  });
+  return feedHtml;
 }
 
-function render(){
-    document.getElementById('feed').innerHTML = getFeedHtml()
-/*
-Challenge:
-1. Take control of the ‘feed’ div.
-2. Render the HTML returned by the getFeedHtml 
-   function to the 'feed' div. 
-   See if you can do this with just one line of code!
-*/
+function render() {
+  document.getElementById("feed").innerHTML = getFeedHtml();
 }
 
-render()
-
+render();
