@@ -1,6 +1,7 @@
 import { tweetsData } from "./data.js";
 import { v4 as uuidv4 } from "https://jspm.dev/uuid";
 
+// GENERAL click handling
 document.addEventListener("click", function (e) {
   if (e.target.dataset.like) {
     handleLikeClick(e.target.dataset.like);
@@ -10,9 +11,12 @@ document.addEventListener("click", function (e) {
     handleReplyClick(e.target.dataset.reply);
   } else if (e.target.id === "tweet-btn") {
     handleTweetBtnClick();
+  } else if (e.target.dataset.replyBtn) {
+    handleReplyBtnClick(e);
   }
 });
 
+// LIKE click handling => increasing and decreasing number of likes
 function handleLikeClick(tweetId) {
   const targetTweetObj = tweetsData.filter(function (tweet) {
     return tweet.uuid === tweetId;
@@ -27,6 +31,7 @@ function handleLikeClick(tweetId) {
   render();
 }
 
+// RETWEET click handling => increasing and decreasing number of retweets
 function handleRetweetClick(tweetId) {
   const targetTweetObj = tweetsData.filter(function (tweet) {
     return tweet.uuid === tweetId;
@@ -41,10 +46,12 @@ function handleRetweetClick(tweetId) {
   render();
 }
 
+// Replying click handling => showing and hiding replies
 function handleReplyClick(replyId) {
   document.getElementById(`replies-${replyId}`).classList.toggle("hidden");
 }
 
+// Tweet click handling => new tweet will be add on the top of the page
 function handleTweetBtnClick() {
   const tweetInput = document.getElementById("tweet-input");
 
@@ -65,6 +72,13 @@ function handleTweetBtnClick() {
   }
 }
 
+// Reply click handling =>
+function handleReplyBtnClick(e) {
+  if (e.target.parentElement.children[1].value) {
+    console.log("mamy to");
+  }
+}
+// creating tweet from the data.js file
 function getFeedHtml() {
   let feedHtml = ``;
 
@@ -98,6 +112,19 @@ function getFeedHtml() {
 `;
       });
     }
+
+    // place for replying to a specific tweet
+    repliesHtml += `
+    <div class="tweet-reply">
+      <div class="tweet-inner">
+          <img src="images/scrimbalogo.png" class="profile-pic">
+          <div>
+              <p class="handle">@Scrimba</p>
+              <textarea placeholder="..." class = 'replying-text'></textarea>
+              <button class='reply-btn' data-reply-btn ='${tweet.uuid}'>reply</button>
+          </div>
+      </div>
+    </div>`;
 
     feedHtml += `
 <div class="tweet">
