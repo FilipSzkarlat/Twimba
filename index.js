@@ -72,10 +72,18 @@ function handleTweetBtnClick() {
   }
 }
 
-// Reply click handling =>
+// Reply btn click handling =>
 function handleReplyBtnClick(e) {
   if (e.target.parentElement.children[1].value) {
-    console.log("mamy to");
+    const targetTweetObj = tweetsData.filter(function (tweet) {
+      return tweet.uuid === e.target.dataset.replyBtn;
+    })[0];
+    targetTweetObj.replies.push({
+      handle: `@Scrimba`,
+      profilePic: `images/scrimbalogo.png`,
+      tweetText: e.target.parentElement.children[1].value,
+    });
+    render();
   }
 }
 // creating tweet from the data.js file
