@@ -101,6 +101,9 @@ function handleReplyBtnClick(e) {
       profilePic: `images/scrimbalogo.png`,
       tweetText: e.target.parentElement.children[1].value,
     });
+    localStorage.setItem(`${targetTweetObj.uuid}.replies`,
+      JSON.stringify(targetTweetObj.replies)
+    )
     render();
   }
 }
@@ -201,20 +204,23 @@ function localStorageUpdate() {
   }
 
   tweetsData.forEach((tweet) => {
-    const tweetHandleLikes = tweet.uuid + ".likes";
-    const tweetHandleIsLiked = tweet.uuid + ".isLiked";
-    const tweetHandleIsRetweeted = tweet.uuid + ".isRetweeted";
-    const tweetHandleRetweets = tweet.uuid + ".retweets";
+    const tweetUuidLikes = tweet.uuid + ".likes";
+    const tweetUuidIsLiked = tweet.uuid + ".isLiked";
+    const tweetUuidIsRetweeted = tweet.uuid + ".isRetweeted";
+    const tweetUuidRetweets = tweet.uuid + ".retweets";
+    const tweetUuidReplies = tweet.uuid + ".replies"
 
-    if (localStorage[tweetHandleLikes]) {
-      tweet.likes = localStorage.getItem(tweetHandleLikes);
-      tweet.isLiked = JSON.parse(localStorage.getItem(tweetHandleIsLiked));
+    if (localStorage[tweetUuidLikes]) {
+      tweet.likes = localStorage.getItem(tweetUuidLikes);
+      tweet.isLiked = JSON.parse(localStorage.getItem(tweetUuidIsLiked));
     }
-    if (localStorage[tweetHandleRetweets]) {
-      tweet.retweets = localStorage.getItem(tweetHandleRetweets);
-      tweet.isRetweeted = JSON.parse(
-        localStorage.getItem(tweetHandleIsRetweeted)
+    if (localStorage[tweetUuidRetweets]) {
+      tweet.retweets = localStorage.getItem(tweetUuidRetweets);
+      tweet.isRetweeted = JSON.parse(localStorage.getItem(tweetUuidIsRetweeted)
       );
+    }
+    if(localStorage[tweetUuidReplies]){
+      tweet.replies = JSON.parse(localStorage.getItem(tweetUuidReplies))
     }
   });
 
