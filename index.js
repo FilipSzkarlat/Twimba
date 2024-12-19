@@ -1,5 +1,7 @@
-import { tweetsData } from "./data.js";
+import { tweetsDataUpload } from "./data.js";
 import { v4 as uuidv4 } from "https://jspm.dev/uuid";
+
+let tweetsData = "";
 
 // GENERAL click handling
 document.addEventListener("click", function (e) {
@@ -21,13 +23,19 @@ function handleLikeClick(tweetId) {
   const targetTweetObj = tweetsData.filter(function (tweet) {
     return tweet.uuid === tweetId;
   })[0];
-
   if (targetTweetObj.isLiked) {
     targetTweetObj.likes--;
+    console.log("minus");
   } else {
     targetTweetObj.likes++;
+    console.log("plus");
   }
+  localStorage.setItem(`${targetTweetObj.uuid}.likes`, targetTweetObj.likes);
   targetTweetObj.isLiked = !targetTweetObj.isLiked;
+  localStorage.setItem(
+    `${targetTweetObj.uuid}.isLiked`,
+    JSON.stringify(targetTweetObj.isLiked)
+  );
   render();
 }
 
@@ -42,7 +50,15 @@ function handleRetweetClick(tweetId) {
   } else {
     targetTweetObj.retweets++;
   }
+  localStorage.setItem(
+    `${targetTweetObj.uuid}.retweets`,
+    targetTweetObj.retweets
+  );
   targetTweetObj.isRetweeted = !targetTweetObj.isRetweeted;
+  localStorage.setItem(
+    `${targetTweetObj.uuid}.isRetweeted`,
+    JSON.stringify(targetTweetObj.isRetweeted)
+  );
   render();
 }
 
@@ -70,6 +86,8 @@ function handleTweetBtnClick() {
     render();
     tweetInput.value = "";
   }
+
+  localStorage.setItem("tweetsData", JSON.stringify(tweetsData));
 }
 
 // Reply btn click handling =>
@@ -92,7 +110,6 @@ function getFeedHtml() {
 
   tweetsData.forEach(function (tweet) {
     let likeIconClass = "";
-
     if (tweet.isLiked) {
       likeIconClass = "liked";
     }
@@ -176,4 +193,32 @@ function render() {
   document.getElementById("feed").innerHTML = getFeedHtml();
 }
 
-render();
+function localStorageUpdate() {
+  if (localStorage["tweetsData"]) {
+    tweetsData = JSON.parse(localStorage.getItem("tweetsData"));
+  } else {
+    tweetsData = tweetsDataUpload;
+  }
+
+  tweetsData.forEach((tweet) => {
+    const tweetHandleLikes = tweet.uuid + ".likes";
+    const tweetHandleIsLiked = tweet.uuid + ".isLiked";
+    const tweetHandleIsRetweeted = tweet.uuid + ".isRetweeted";
+    const tweetHandleRetweets = tweet.uuid + ".retweets";
+
+    if (localStorage[tweetHandleLikes]) {
+      tweet.likes = localStorage.getItem(tweetHandleLikes);
+      tweet.isLiked = JSON.parse(localStorage.getItem(tweetHandleIsLiked));
+    }
+    if (localStorage[tweetHandleRetweets]) {
+      tweet.retweets = localStorage.getItem(tweetHandleRetweets);
+      tweet.isRetweeted = JSON.parse(
+        localStorage.getItem(tweetHandleIsRetweeted)
+      );
+    }
+  });
+
+  render();
+}
+
+localStorageUpdate();
