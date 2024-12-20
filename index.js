@@ -146,7 +146,6 @@ function getFeedHtml() {
 <div class="tweet-reply">
     <div class="tweet-inner">
         <img src="${reply.profilePic}" class="profile-pic">
-        <i class="fa-solid fa-trash tweet-delete" data-delete-reply='${tweet.uuid}'></i>
             <div>
                 <p class="handle">${reply.handle}</p>
                 <p class="tweet-text">${reply.tweetText}</p>
