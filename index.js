@@ -15,6 +15,8 @@ document.addEventListener("click", function (e) {
     handleTweetBtnClick();
   } else if (e.target.dataset.replyBtn) {
     handleReplyBtnClick(e);
+  } else if (e.target.dataset.delete) {
+    handleDeleteClick(e.target.dataset.delete);
   }
 });
 
@@ -101,12 +103,25 @@ function handleReplyBtnClick(e) {
       profilePic: `images/scrimbalogo.png`,
       tweetText: e.target.parentElement.children[1].value,
     });
-    localStorage.setItem(`${targetTweetObj.uuid}.replies`,
+    localStorage.setItem(
+      `${targetTweetObj.uuid}.replies`,
       JSON.stringify(targetTweetObj.replies)
-    )
+    );
     render();
   }
 }
+
+// Delete click handling => deleting a tweet
+function handleDeleteClick(tweetId) {
+  const targetTweetObj = tweetsData.filter(function (tweet) {
+    return tweet.uuid === tweetId;
+  })[0];
+  const index = tweetsData.indexOf(targetTweetObj);
+  tweetsData.splice(index, 1);
+  localStorage.setItem("tweetsData", JSON.stringify(tweetsData));
+  render();
+}
+
 // creating tweet from the data.js file
 function getFeedHtml() {
   let feedHtml = ``;
@@ -131,6 +146,7 @@ function getFeedHtml() {
 <div class="tweet-reply">
     <div class="tweet-inner">
         <img src="${reply.profilePic}" class="profile-pic">
+        <i class="fa-solid fa-trash tweet-delete" data-delete-reply='${tweet.uuid}'></i>
             <div>
                 <p class="handle">${reply.handle}</p>
                 <p class="tweet-text">${reply.tweetText}</p>
@@ -158,6 +174,7 @@ function getFeedHtml() {
 <div class="tweet">
     <div class="tweet-inner">
         <img src="${tweet.profilePic}" class="profile-pic">
+        <i class="fa-solid fa-trash tweet-delete" data-delete ='${tweet.uuid}'></i>
         <div>
             <p class="handle">${tweet.handle}</p>
             <p class="tweet-text">${tweet.tweetText}</p>
@@ -208,7 +225,7 @@ function localStorageUpdate() {
     const tweetUuidIsLiked = tweet.uuid + ".isLiked";
     const tweetUuidIsRetweeted = tweet.uuid + ".isRetweeted";
     const tweetUuidRetweets = tweet.uuid + ".retweets";
-    const tweetUuidReplies = tweet.uuid + ".replies"
+    const tweetUuidReplies = tweet.uuid + ".replies";
 
     if (localStorage[tweetUuidLikes]) {
       tweet.likes = localStorage.getItem(tweetUuidLikes);
@@ -216,11 +233,12 @@ function localStorageUpdate() {
     }
     if (localStorage[tweetUuidRetweets]) {
       tweet.retweets = localStorage.getItem(tweetUuidRetweets);
-      tweet.isRetweeted = JSON.parse(localStorage.getItem(tweetUuidIsRetweeted)
+      tweet.isRetweeted = JSON.parse(
+        localStorage.getItem(tweetUuidIsRetweeted)
       );
     }
-    if(localStorage[tweetUuidReplies]){
-      tweet.replies = JSON.parse(localStorage.getItem(tweetUuidReplies))
+    if (localStorage[tweetUuidReplies]) {
+      tweet.replies = JSON.parse(localStorage.getItem(tweetUuidReplies));
     }
   });
 
